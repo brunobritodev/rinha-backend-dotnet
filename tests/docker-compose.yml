@@ -1,0 +1,73 @@
+version: "3.5"
+services:
+
+  db:
+    image: postgres:latest
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: 10203040
+      POSTGRES_USER: user
+      POSTGRES_DB: rinha
+    volumes:
+      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ./postgres.conf:/etc/postgresql/postgresql.conf
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "0.8"
+          memory: "2.5GB"
+
+  api01:
+    build:
+      context: ../
+      dockerfile: ./RinhaBackend/Dockerfile
+    depends_on:
+      - db
+    environment:
+      # https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector
+      ConnectionStrings__DefaultConnection: "Host=localhost;Database=rinha;Username=user;Password=10203040;Maximum Pool Size=150;Timeout=60;Cancellation Timeout=0;No Reset On Close=true"
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://localhost:8080"
+      #- DOTNET_GCConserveMemory=1
+      #- DOTNET_gcServer=1
+      #- DOTNET_gcConcurrent=0
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: "0.3GB"
+  
+  api02:
+    build:
+      context: ../
+      dockerfile: ./RinhaBackend/Dockerfile
+    depends_on:
+      - db
+    environment:
+      # https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector
+      ConnectionStrings__DefaultConnection: "Host=localhost;Database=rinha;Username=user;Password=10203040;Maximum Pool Size=150;Timeout=60;Cancellation Timeout=0;No Reset On Close=true"
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://localhost:8081"
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: "0.3GB"
+  
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api01
+      - api02
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "0.2GB"
