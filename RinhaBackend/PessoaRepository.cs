@@ -83,6 +83,21 @@ public class PessoaRepository : IPessoaRepository
         return null;
     }
 
+    public async Task<bool> GetByApelido(string apelido)
+    {
+        var cmd = _connection.CreateCommand();
+        cmd.CommandText = """"SELECT EXISTS(SELECT 1 FROM "Pessoas" WHERE "Apelido" = @Apelido);"""";
+        cmd.Parameters.AddWithValue("Apelido", apelido);
+
+        bool exists = false;
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (reader.Read())
+            exists = reader.GetBoolean(0);
+
+        return exists;
+    }
+
     public async Task<int> Total()
     {
         await using var cmd = _connection.CreateCommand();

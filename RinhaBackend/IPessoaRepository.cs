@@ -6,4 +6,5 @@ public interface IPessoaRepository
     Task<Pessoa> GetById(Guid id);
     Task<int> Total();
     Task<List<Pessoa>> ListByTerm(string s);
+    Task<bool> GetByApelido(string apelido);
 }

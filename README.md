@@ -28,6 +28,11 @@ nginx:
 
 ![dotnet](/misc/carga-inicial/nginx.png)
 
+contagem de pessoas:
+
+![pessoas](/misc/carga-inicial/pessoas.png)
+
+
 # Carga Dobrada
 
 Com essa configuração e dobrando a carga, vemos um aumento de memória e CPU, bem como chamadas mais lentas, seria necessário ajustar a CPU e memória da aplicação e talvez mexer no pool de conexões e conseguir aumentar ainda mais a carga.
@@ -45,6 +50,10 @@ Postgres:
 nginx:
 
 ![dotnet](/misc/carga-dobrada/nginx.png)
+
+contagem de pessoas:
+
+![pessoas](/misc/carga-dobrada/pessoas.png)
 
 ## Requisitos
 * Docker e Docker Compose

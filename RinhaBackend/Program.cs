@@ -27,8 +27,11 @@ app.MapPost("/pessoas", async ValueTask<Results<Created, UnprocessableEntity>> (
     if (!pessoa.Valido())
         return TypedResults.UnprocessableEntity();
 
-    pessoa.Id = Guid.NewGuid();
+    var existe = await pessoaRepository.GetByApelido(pessoa.Apelido);
+    if(existe)
+        return TypedResults.UnprocessableEntity();
 
+    pessoa.Id = Guid.NewGuid();
     await pessoaRepository.Insert(pessoa);
 
     return TypedResults.Created($"/pessoas/{pessoa.Id}");
