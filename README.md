@@ -58,6 +58,7 @@ contagem de pessoas:
 ## Requisitos
 * Docker e Docker Compose
 * .NET 7 (para desenvolvimento)
+* Linux - para conseguir usar o `network_mode: host` corretamente.
 
 ## Configuração Inicial
 
